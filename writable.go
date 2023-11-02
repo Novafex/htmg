@@ -18,6 +18,30 @@ type Writable interface {
 
 	// WriteString accepts an [io.StringWriter] interface for writing strings to
 	// the output buffer. It should return an error if one occurs which will
-	// half the encoding process. 
+	// half the encoding process.
 	WriteString(buf io.StringWriter) error
+}
+
+// WritableString is a helper type for pure text content that can be written out
+// to the buffers.
+type WritableString struct {
+	content string
+}
+
+func (w WritableString) Write(buf io.Writer) error {
+	buf.Write(stringToBytes(w.content))
+	return nil
+}
+
+func (w WritableString) WriteString(buf io.StringWriter) error {
+	buf.WriteString(w.content)
+	return nil
+}
+
+// NewString contructs a new [WritableString] using the contents provided.
+//
+// [WritableString] is just a helper type that can write text directly as a
+// [Writable] interfaced object.
+func NewString(text string) Writable {
+	return &WritableString{text}
 }
