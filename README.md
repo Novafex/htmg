@@ -6,8 +6,40 @@ dynamic generation of HTML responses to clients over web services.
 
 Features a chained-method style of building "documents" but can be used to make
 anything. It is not particular about tag names or attributes so it's up to you
-to ensure sanitization and standards compliance. It can be used to make XML as
-well since you can use custom tag names.
+to ensure standards compliance. Most nodes and attributes feature both safe
+sanitized versions, and unsafe slightly quicker versions.
+
+## Usage
+
+Install with the usual `go get -u github.com/novafex/htmg` and then start using:
+
+```go
+package main
+
+import (
+	"os"
+
+	"github.com/novafex/htmg"
+)
+
+func main() {
+	// Build a tree
+	doc := htmg.NewElem("html", htmg.NewAttr("lang", "en")).Append(
+		htmg.NewElemWithChildren(
+			"body",
+			htmg.NewElem("h1").Append(
+				htmg.NewText("Hello, World!"),
+			),
+			htmg.NewText("I'm HTMG from Novafex"),
+		),
+	)
+
+	doc.Write(os.Stdout)
+	// <html lang="en"><body><h1>Hello, World!</h1>I'm HTMG from Novafex</body></html>
+}
+```
+
+See more running examples in the [examples](./examples/) folder.
 
 ## License
 
