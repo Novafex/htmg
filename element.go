@@ -10,7 +10,8 @@ import (
 //
 // It implements both [Writable] and [Node] interfaces
 type Elem struct {
-	*Void
+	tag      string
+	attrs    []Attribute
 	children []Node
 }
 
@@ -28,20 +29,26 @@ func (e Elem) Write(buf io.Writer) error {
 		}
 	}
 
-	// End current tag
-	buf.Write(CHAR_GT)
+	// Do we auto-close this?
+	if len(e.children) == 0 {
+		// Do self-closing
+		buf.Write(STR_SELF_CLOSE)
+	} else {
+		// End current tag
+		buf.Write(CHAR_GT)
 
-	// Write children
-	for i, c := range e.children {
-		if err = c.Write(buf); err != nil {
-			return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
+		// Write children
+		for i, c := range e.children {
+			if err = c.Write(buf); err != nil {
+				return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
+			}
 		}
-	}
 
-	// Closing tag
-	buf.Write(STR_CLOSE)
-	buf.Write(stringToBytes(e.tag))
-	buf.Write(CHAR_GT)
+		// Closing tag
+		buf.Write(STR_CLOSE)
+		buf.Write(stringToBytes(e.tag))
+		buf.Write(CHAR_GT)
+	}
 
 	return nil
 }
@@ -60,20 +67,26 @@ func (e Elem) WriteString(buf io.StringWriter) error {
 		}
 	}
 
-	// End current tag
-	buf.WriteString(">")
+	// Do we auto-close this?
+	if len(e.children) == 0 {
+		// Do self-closing
+		buf.WriteString(" />")
+	} else {
+		// End current tag
+		buf.WriteString(">")
 
-	// Write children
-	for i, c := range e.children {
-		if err = c.WriteString(buf); err != nil {
-			return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
+		// Write children
+		for i, c := range e.children {
+			if err = c.WriteString(buf); err != nil {
+				return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
+			}
 		}
-	}
 
-	// Closing tag
-	buf.WriteString("</")
-	buf.WriteString(e.tag)
-	buf.WriteString(">")
+		// Closing tag
+		buf.WriteString("</")
+		buf.WriteString(e.tag)
+		buf.WriteString(">")
+	}
 
 	return nil
 }
@@ -94,20 +107,16 @@ func (e *Elem) Append(nodes ...Node) Node {
 
 func NewElem(tag string, attrs ...Attribute) *Elem {
 	return &Elem{
-		Void: &Void{
-			tag:   tag,
-			attrs: attrs,
-		},
+		tag:      tag,
+		attrs:    attrs,
 		children: nil,
 	}
 }
 
 func NewElemWithChildren(tag string, children ...Node) *Elem {
 	return &Elem{
-		Void: &Void{
-			tag:   tag,
-			attrs: nil,
-		},
+		tag:      tag,
+		attrs:    nil,
 		children: children,
 	}
 }

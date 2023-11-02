@@ -5,7 +5,12 @@ package htmg
 type Node interface {
 	Writable
 
+	// Children retrieves the current slice of applied child nodes
 	Children() []Node
-	PrependChild(child Node) Node
-	AppendChild(child Node) Node
+
+	// Prepend adds the given children to the beginning of the children list
+	Prepend(children ...Node) Node
+
+	// Append adds the given children to the end of the children list
+	Append(children ...Node) Node
 }

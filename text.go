@@ -28,11 +28,11 @@ func (n Text) Children() []Node {
 	return nil
 }
 
-func (n *Text) PrependChild(child Node) Node {
+func (n *Text) Prepend(nodes ...Node) Node {
 	return n
 }
 
-func (n *Text) AppendChild(child Node) Node {
+func (n *Text) Append(nodes ...Node) Node {
 	return n
 }
 

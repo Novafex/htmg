@@ -22,8 +22,8 @@ func TestUnsafeText(t *testing.T) {
 	}
 	buf.Reset()
 
-	n.AppendChild(NewUnsafeText(""))
-	n.PrependChild(NewUnsafeText(""))
+	n.Append(NewUnsafeText(""))
+	n.Prepend(NewUnsafeText(""))
 
 	if n.Children() != nil {
 		t.Error("expected nil children")
@@ -47,8 +47,8 @@ func TestSafeText(t *testing.T) {
 	}
 	buf.Reset()
 
-	n.AppendChild(NewUnsafeText(""))
-	n.PrependChild(NewUnsafeText(""))
+	n.Append(NewUnsafeText(""))
+	n.Prepend(NewUnsafeText(""))
 
 	if n.Children() != nil {
 		t.Error("expected nil children")
