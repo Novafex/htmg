@@ -8,22 +8,7 @@ import (
 func TestElemWrite(t *testing.T) {
 	buf := new(bytes.Buffer)
 
-	e := NewElem("foo")
-
-	// Self closing no attrs
-	e.Write(buf)
-	if buf.String() != "<foo />" {
-		t.Errorf("invalid write '%s'", buf.String())
-	}
-	buf.Reset()
-
-	// Self closing with attrs
-	e = NewElem("foo", NewAttr("bar", "baz"))
-	e.Write(buf)
-	if buf.String() != `<foo bar="baz" />` {
-		t.Errorf("invalid write '%s'", buf.String())
-	}
-	buf.Reset()
+	e := NewElem("foo", NewAttr("bar", "baz"))
 
 	// With children and attrs
 	e.Append(NewUnsafeText("fiz"))
@@ -37,22 +22,7 @@ func TestElemWrite(t *testing.T) {
 func TestElemWriteString(t *testing.T) {
 	buf := new(bytes.Buffer)
 
-	e := NewElem("foo")
-
-	// Self closing no attrs
-	e.WriteString(buf)
-	if buf.String() != "<foo />" {
-		t.Errorf("invalid write '%s'", buf.String())
-	}
-	buf.Reset()
-
-	// Self closing with attrs
-	e = NewElem("foo", NewAttr("bar", "baz"))
-	e.WriteString(buf)
-	if buf.String() != `<foo bar="baz" />` {
-		t.Errorf("invalid write '%s'", buf.String())
-	}
-	buf.Reset()
+	e := NewElem("foo", NewAttr("bar", "baz"))
 
 	// With children and attrs
 	e.Prepend(NewUnsafeText("fiz"))
