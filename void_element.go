@@ -7,8 +7,6 @@ import (
 
 // Void is a special type of element that features a tag, and attributes, but
 // can never contain children.
-//
-// It implements both [Writable] and [Node] interfaces
 type Void struct {
 	tag   string
 	attrs []Attribute

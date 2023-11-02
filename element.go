@@ -29,26 +29,20 @@ func (e Elem) Write(buf io.Writer) error {
 		}
 	}
 
-	// Do we auto-close this?
-	if len(e.children) == 0 {
-		// Do self-closing
-		buf.Write(STR_SELF_CLOSE)
-	} else {
-		// End current tag
-		buf.Write(CHAR_GT)
+	// End current tag
+	buf.Write(CHAR_GT)
 
-		// Write children
-		for i, c := range e.children {
-			if err = c.Write(buf); err != nil {
-				return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
-			}
+	// Write children
+	for i, c := range e.children {
+		if err = c.Write(buf); err != nil {
+			return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
 		}
-
-		// Closing tag
-		buf.Write(STR_CLOSE)
-		buf.Write(stringToBytes(e.tag))
-		buf.Write(CHAR_GT)
 	}
+
+	// Closing tag
+	buf.Write(STR_CLOSE)
+	buf.Write(stringToBytes(e.tag))
+	buf.Write(CHAR_GT)
 
 	return nil
 }
@@ -67,26 +61,20 @@ func (e Elem) WriteString(buf io.StringWriter) error {
 		}
 	}
 
-	// Do we auto-close this?
-	if len(e.children) == 0 {
-		// Do self-closing
-		buf.WriteString(" />")
-	} else {
-		// End current tag
-		buf.WriteString(">")
+	// End current tag
+	buf.WriteString(">")
 
-		// Write children
-		for i, c := range e.children {
-			if err = c.WriteString(buf); err != nil {
-				return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
-			}
+	// Write children
+	for i, c := range e.children {
+		if err = c.WriteString(buf); err != nil {
+			return fmt.Errorf("write child %d in %s element failed: %s", i, e.tag, err.Error())
 		}
-
-		// Closing tag
-		buf.WriteString("</")
-		buf.WriteString(e.tag)
-		buf.WriteString(">")
 	}
+
+	// Closing tag
+	buf.WriteString("</")
+	buf.WriteString(e.tag)
+	buf.WriteString(">")
 
 	return nil
 }
