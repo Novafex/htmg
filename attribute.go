@@ -3,7 +3,6 @@ package htmg
 import (
 	"errors"
 	"io"
-	"strings"
 
 	"github.com/sym01/htmlsanitizer"
 )
@@ -65,7 +64,7 @@ func (a Attr) Write(buf io.Writer) error {
 	if len(a.Value) > 0 {
 		buf.Write(STR_EQ_QT)
 		buf.Write(stringToBytes(a.Value))
-		buf.Write(CHAR_QT)
+		buf.Write(CHAR_EQ)
 	}
 	return nil
 }
@@ -85,7 +84,7 @@ func (a Attr) WriteString(buf io.StringWriter) error {
 }
 
 func (a Attr) IsFlag() bool {
-	return len(a.Value) == 0
+	return len(a.Value) > 0
 }
 
 func NewAttr(name, value string) *Attr {
@@ -116,7 +115,7 @@ func (a SafeAttr) Write(buf io.Writer) error {
 	if a.bool {
 		buf.Write(STR_EQ_QT)
 		buf.Write(stringToBytes(a.value))
-		buf.Write(CHAR_QT)
+		buf.Write(CHAR_EQ)
 	}
 	return nil
 }
@@ -135,7 +134,7 @@ func (a SafeAttr) WriteString(buf io.StringWriter) error {
 }
 
 func (a SafeAttr) IsFlag() bool {
-	return len(a.value) == 0
+	return len(a.value) > 0
 }
 
 // Name returns the current name of the attribute
@@ -150,14 +149,10 @@ func (a SafeAttr) Value() string {
 
 // SetValue sets the value of the attribute and does so by sanitizing the input
 // for HTML. Returns an error from [htmlsanitizer] if it encounters one.
-func (a *SafeAttr) SetValue(val string) *SafeAttr {
-	safe, err := htmlsanitizer.SanitizeString(val)
-	if err != nil {
-		panic(err)
-	}
-	a.value = safe
-
-	return a
+func (a *SafeAttr) SetValue(val string) error {
+	var err error
+	a.name, err = htmlsanitizer.SanitizeString(val)
+	return err
 }
 
 // NewSafeAttr creates a new SafeAttr attribute that has it's name and value
@@ -166,7 +161,7 @@ func (a *SafeAttr) SetValue(val string) *SafeAttr {
 func NewSafeAttr(name, value string) *SafeAttr {
 	attr := &SafeAttr{
 		bool: len(value) > 0,
-		name: strings.ToLower(sanitizeAttribute(name)),
+		name: sanitizeAttribute(name),
 	}
 
 	if len(value) > 0 {
