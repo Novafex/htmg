@@ -10,8 +10,7 @@ import (
 //
 // It implements both [Writable] and [Node] interfaces
 type Elem struct {
-	tag      string
-	attrs    []Attribute
+	*Void
 	children []Node
 }
 
@@ -95,16 +94,20 @@ func (e *Elem) Append(nodes ...Node) Node {
 
 func NewElem(tag string, attrs ...Attribute) *Elem {
 	return &Elem{
-		tag:      tag,
-		attrs:    attrs,
+		Void: &Void{
+			tag:   tag,
+			attrs: attrs,
+		},
 		children: nil,
 	}
 }
 
 func NewElemWithChildren(tag string, children ...Node) *Elem {
 	return &Elem{
-		tag:      tag,
-		attrs:    nil,
+		Void: &Void{
+			tag:   tag,
+			attrs: nil,
+		},
 		children: children,
 	}
 }
